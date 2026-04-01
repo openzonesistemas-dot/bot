@@ -50,17 +50,15 @@ async def enviar_sinais():
     print("🚀 BOT INICIADO NO RAILWAY")
 
     while True:
-
         try:
-            # Escolhe o jogo
+
             jogo = random.choice(list(jogos.values()))
 
             giros = random.randint(8, 15)
             normal = random.randint(8, 12)
             turbo = random.randint(1, 3)
 
-            # Cada sinal tem 5 minutos (300s)
-            duracao = 300
+            duracao = 300  # 5 minutos
 
             tempo = datetime.now(tz) + timedelta(seconds=duracao)
             hora = tempo.strftime("%H:%M")
@@ -88,7 +86,8 @@ ESSA AQUI PAGA MUITO ⤵️
                 [InlineKeyboardButton("🎰 JOGAR AGORA", url=jogo["link"])]
             ])
 
-            await bot.send_photo(
+            # 🔥 Versão PTB 21+: métodos NÃO são async
+            bot.send_photo(
                 chat_id=CHAT_ID,
                 photo=jogo["imagem"],
                 caption=mensagem,
@@ -98,10 +97,9 @@ ESSA AQUI PAGA MUITO ⤵️
 
             print("✅ Sinal enviado:", jogo["nome"], "| Próximo às:", hora)
 
-            # Aguarda até 30 segundos antes da próxima mensagem
             await asyncio.sleep(duracao - 30)
 
-            # Mensagem antes da próxima oportunidade
+            # MENSAGEM DE ANÁLISE 30s ANTES
             mensagem_lucro = """
 🔥 <b>ANÁLISE CONCLUÍDA</b>
 
@@ -112,15 +110,14 @@ ESSA AQUI PAGA MUITO ⤵️
 ⏳ Falta pouco para o próximo sinal!
 """
 
-            await bot.send_message(
+            bot.send_message(
                 chat_id=CHAT_ID,
                 text=mensagem_lucro,
                 parse_mode="HTML"
             )
 
-            print("🔎 Mensagem 'buscando brechas' enviada")
+            print("🔎 Mensagem de 'buscando brechas' enviada")
 
-            # Espera os 30s finais
             await asyncio.sleep(30)
 
         except BadRequest as e:
