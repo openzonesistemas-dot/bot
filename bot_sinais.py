@@ -20,22 +20,22 @@ jogos = {
     "tiger": {
         "nome": "🐯 FORTUNE TIGER 🐯",
         "imagem": "https://raster.digital/sinais/imagens/fortunetiger.jpg",
-        "link": "https://hype33.online"
+        "link": "https://hype33.fun"
     },
     "snake": {
         "nome": "🐍 FORTUNE SNAKE 🐍",
         "imagem": "https://raster.digital/sinais/imagens/fortunesnake.jpg",
-        "link": "https://hype33.online"
+        "link": "https://hype33.fun"
     },
     "dragon": {
         "nome": "🐉 FORTUNE DRAGON 🐉",
         "imagem": "https://raster.digital/sinais/imagens/fortunedragon.jpg",
-        "link": "https://hype33.online"
+        "link": "https://hype33.fun"
     },
     "rabbit": {
         "nome": "🐰 RABBIT FORTUNE 🐰",
         "imagem": "https://raster.digital/sinais/imagens/rabbitfortune.jpg",
-        "link": "https://hype33.online"
+        "link": "https://hype33.fun"
     }
 }
 
