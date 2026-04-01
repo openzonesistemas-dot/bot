@@ -1,16 +1,18 @@
 import asyncio
 import random
 import pytz
+import os
+import flask
 from datetime import datetime, timedelta
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import BadRequest, TelegramError
 
 # ================================
-# CONFIGURAÇÕES
+# CONFIGURAÇÕES VIA RAILWAY
 # ================================
 
-TOKEN = "8421307444:AAFDopQKizng6q8OzP-F9JqmP7_9jK_ip7E"
-CHAT_ID = -1003817147897
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = int(os.getenv("TELEGRAM_CHAT"))
 
 # FUSO HORÁRIO BRASIL
 tz = pytz.timezone("America/Sao_Paulo")
@@ -138,3 +140,8 @@ https://www.hype33.online
 
 if __name__ == "__main__":
     asyncio.run(enviar_sinais())
+
+if TOKEN is None:
+    print("❌ ERRO: TELEGRAM_TOKEN não carregado!")
+else:
+    print("✅ Token carregado com sucesso")
