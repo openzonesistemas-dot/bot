@@ -1,3 +1,4 @@
+import os
 import asyncio
 import random
 import pytz
@@ -46,19 +47,20 @@ async def enviar_sinais():
 
     bot = Bot(token=TOKEN)
 
-    print("🚀 BOT INICIADO")
+    print("🚀 BOT INICIADO NO RAILWAY")
 
     while True:
 
         try:
-
+            # Escolhe o jogo
             jogo = random.choice(list(jogos.values()))
 
             giros = random.randint(8, 15)
             normal = random.randint(8, 12)
             turbo = random.randint(1, 3)
 
-            duracao = random.randint(240, 360)
+            # Cada sinal tem 5 minutos (300s)
+            duracao = 300
 
             tempo = datetime.now(tz) + timedelta(seconds=duracao)
             hora = tempo.strftime("%H:%M")
@@ -72,7 +74,7 @@ async def enviar_sinais():
 
 🔥 APROVEITE AGORA
 
-💰 {normal}X Normal
+💰 {normal}X Normal  
 🚀 {turbo}X Turbo
 
 💡 Dica: Alterne os giros
@@ -94,19 +96,20 @@ ESSA AQUI PAGA MUITO ⤵️
                 reply_markup=teclado
             )
 
-            print("✅ Sinal enviado:", jogo["nome"], "| Próximo até:", hora)
+            print("✅ Sinal enviado:", jogo["nome"], "| Próximo às:", hora)
 
+            # Aguarda até 30 segundos antes da próxima mensagem
             await asyncio.sleep(duracao - 30)
 
+            # Mensagem antes da próxima oportunidade
             mensagem_lucro = """
-✅ <b>LUCRANDO COM SINAIS</b>
+🔥 <b>ANÁLISE CONCLUÍDA</b>
 
-🤑 Recolha seu lucro e fique atento à próxima oportunidade.
+🤑 Recolha seu lucro e prepare-se…
 
-🎁 Cadastre-se
-https://www.hype33.online
+🔎 <b>BUSCANDO NOVAS BRECHAS...</b>
 
-🔎 Buscando novas brechas...
+⏳ Falta pouco para o próximo sinal!
 """
 
             await bot.send_message(
@@ -115,8 +118,9 @@ https://www.hype33.online
                 parse_mode="HTML"
             )
 
-            print("💰 Mensagem de lucro enviada")
+            print("🔎 Mensagem 'buscando brechas' enviada")
 
+            # Espera os 30s finais
             await asyncio.sleep(30)
 
         except BadRequest as e:
@@ -131,11 +135,9 @@ https://www.hype33.online
             print("❌ ERRO GERAL:", erro)
             await asyncio.sleep(10)
 
-
 # ================================
 # EXECUÇÃO
 # ================================
 
 if __name__ == "__main__":
     asyncio.run(enviar_sinais())
-
