@@ -4,18 +4,18 @@ import pytz
 import os
 from datetime import datetime, timedelta
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.error import TelegramError, BadRequest
+from telegram.error import BadRequest, TelegramError
 
 # ================================
-# VARIÁVEIS DO RAILWAY
+# CONFIGURAÇÕES VIA RAILWAY
 # ================================
+
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = int(os.getenv("TELEGRAM_CHAT"))
 
-# Fuso horário Brasil
+# FUSO HORÁRIO BRASIL
 tz = pytz.timezone("America/Sao_Paulo")
 
-# Jogos disponíveis
 jogos = {
     "tiger": {
         "nome": "🐯 FORTUNE TIGER 🐯",
@@ -40,16 +40,19 @@ jogos = {
 }
 
 # ================================
-# FUNÇÃO PRINCIPAL
+# BOT
 # ================================
-async def enviar_sinais():
-    bot = Bot(token=TOKEN)
-    print("🚀 BOT INICIADO | Ciclo: 5 minutos por sinal")
 
-    DURAÇÃO_SINAL = 300  # 5 minutos (fixo)
-    AVISO_TEMPO = 30     # 30 segundos antes
+async def enviar_sinais():
+
+    bot = Bot(token=TOKEN)
+
+    print("🚀 BOT INICIADO | Ciclo 5 minutos")
+
+    DURACAO = 300  # 5 minutos fixo
 
     while True:
+
         try:
             jogo = random.choice(list(jogos.values()))
 
@@ -57,8 +60,8 @@ async def enviar_sinais():
             normal = random.randint(8, 12)
             turbo = random.randint(1, 3)
 
-            fim = datetime.now(tz) + timedelta(seconds=DURAÇÃO_SINAL)
-            hora_fim = fim.strftime("%H:%M")
+            fim = datetime.now(tz) + timedelta(seconds=DURACAO)
+            hora = fim.strftime("%H:%M")
 
             mensagem = f"""
 🤑 <b>HORA DE FAZER GRANA</b>
@@ -69,12 +72,12 @@ async def enviar_sinais():
 
 🔥 APROVEITE AGORA
 
-💰 {normal}X Normal  
+💰 {normal}X Normal
 🚀 {turbo}X Turbo
 
 💡 Dica: Alterne os giros
 
-⏰ Brecha até: {hora_fim}
+⏰ Brecha até: {hora}
 
 ESSA AQUI PAGA MUITO ⤵️
 """
@@ -83,7 +86,6 @@ ESSA AQUI PAGA MUITO ⤵️
                 [InlineKeyboardButton("🎰 JOGAR AGORA", url=jogo["link"])]
             ])
 
-            # Envia o sinal
             await bot.send_photo(
                 chat_id=CHAT_ID,
                 photo=jogo["imagem"],
@@ -92,37 +94,53 @@ ESSA AQUI PAGA MUITO ⤵️
                 reply_markup=teclado
             )
 
-            print(f"✅ Sinal enviado | {jogo['nome']} | Termina às {hora_fim}")
+            print("✅ Sinal enviado:", jogo["nome"], "| Próximo até:", hora)
 
-            # AGUARDA ATÉ 30s ANTES DO PRÓXIMO SINAL
-            await asyncio.sleep(DURAÇÃO_SINAL - AVISO_TEMPO)
+            # AGUARDA ATÉ 30s ANTES
+            await asyncio.sleep(DURACAO - 30)
 
-            # Envia aviso de busca de estratégia
+            # 🔎 MENSAGEM DE LUCRO + BUSCA (igual seu bot antigo)
+            mensagem_final = """
+✅ <b>LUCRANDO COM SINAIS</b>
+
+🤑 Recolha seu lucro e fique atento à próxima oportunidade.
+
+🎁 Cadastre-se
+https://www.hype33.online
+
+🔎 Buscando novas brechas...
+"""
+
             await bot.send_message(
                 chat_id=CHAT_ID,
-                text="🔎 <b>Buscando novas estratégias...</b>",
+                text=mensagem_final,
                 parse_mode="HTML"
             )
-            print("🔎 Buscando novas estratégias...")
 
-            # Espera os 30s finais
-            await asyncio.sleep(AVISO_TEMPO)
+            print("💰 Mensagem final enviada")
 
-        except (TelegramError, BadRequest) as e:
+            await asyncio.sleep(30)  # mesma lógica do bot antigo
+
+        except BadRequest as e:
             print("⚠️ Erro Telegram:", e)
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
+
+        except TelegramError as e:
+            print("⚠️ Falha Telegram:", e)
+            await asyncio.sleep(10)
 
         except Exception as erro:
             print("❌ ERRO GERAL:", erro)
-            await asyncio.sleep(5)
-
+            await asyncio.sleep(10)
 
 # ================================
-# INICIAR BOT
+# EXECUÇÃO
 # ================================
+
 if __name__ == "__main__":
-    if TOKEN is None:
-        print("❌ ERRO: TELEGRAM_TOKEN não encontrado!")
-    else:
-        print("✅ Token carregado com sucesso")
     asyncio.run(enviar_sinais())
+
+if TOKEN is None:
+        print("❌ ERRO: TELEGRAM_TOKEN não carregado!")
+else:
+        print("✅ Token carregado com sucesso")

@@ -1,16 +1,17 @@
 import asyncio
 import random
 import pytz
+import os
 from datetime import datetime, timedelta
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import BadRequest, TelegramError
 
 # ================================
-# CONFIGURAÇÕES
+# CONFIGURAÇÕES VIA RAILWAY
 # ================================
 
-TOKEN = "8421307444:AAFDopQKizng6q8OzP-F9JqmP7_9jK_ip7E"
-CHAT_ID = -1003817147897
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = int(os.getenv("TELEGRAM_CHAT"))
 
 # FUSO HORÁRIO BRASIL
 tz = pytz.timezone("America/Sao_Paulo")
@@ -46,22 +47,21 @@ async def enviar_sinais():
 
     bot = Bot(token=TOKEN)
 
-    print("🚀 BOT INICIADO")
+    print("🚀 BOT INICIADO | Ciclo 5 minutos")
+
+    DURACAO = 300  # 5 minutos fixo
 
     while True:
 
         try:
-
             jogo = random.choice(list(jogos.values()))
 
             giros = random.randint(8, 15)
             normal = random.randint(8, 12)
             turbo = random.randint(1, 3)
 
-            duracao = random.randint(240, 360)
-
-            tempo = datetime.now(tz) + timedelta(seconds=duracao)
-            hora = tempo.strftime("%H:%M")
+            fim = datetime.now(tz) + timedelta(seconds=DURACAO)
+            hora = fim.strftime("%H:%M")
 
             mensagem = f"""
 🤑 <b>HORA DE FAZER GRANA</b>
@@ -96,9 +96,11 @@ ESSA AQUI PAGA MUITO ⤵️
 
             print("✅ Sinal enviado:", jogo["nome"], "| Próximo até:", hora)
 
-            await asyncio.sleep(duracao - 30)
+            # AGUARDA ATÉ 30s ANTES
+            await asyncio.sleep(DURACAO - 30)
 
-            mensagem_lucro = """
+            # 🔎 MENSAGEM DE LUCRO + BUSCA (igual seu bot antigo)
+            mensagem_final = """
 ✅ <b>LUCRANDO COM SINAIS</b>
 
 🤑 Recolha seu lucro e fique atento à próxima oportunidade.
@@ -111,13 +113,13 @@ https://www.hype33.online
 
             await bot.send_message(
                 chat_id=CHAT_ID,
-                text=mensagem_lucro,
+                text=mensagem_final,
                 parse_mode="HTML"
             )
 
-            print("💰 Mensagem de lucro enviada")
+            print("💰 Mensagem final enviada")
 
-            await asyncio.sleep(30)
+            await asyncio.sleep(30)  # mesma lógica do bot antigo
 
         except BadRequest as e:
             print("⚠️ Erro Telegram:", e)
@@ -131,10 +133,14 @@ https://www.hype33.online
             print("❌ ERRO GERAL:", erro)
             await asyncio.sleep(10)
 
-
 # ================================
 # EXECUÇÃO
 # ================================
 
 if __name__ == "__main__":
     asyncio.run(enviar_sinais())
+
+if TOKEN is None:
+        print("❌ ERRO: TELEGRAM_TOKEN não carregado!")
+else:
+        print("✅ Token carregado com sucesso")
